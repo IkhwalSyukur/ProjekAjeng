@@ -20,49 +20,19 @@ struct gates{
         pinMode(motor3close,OUTPUT);
     }
 
-    void gate1open (){
-        digitalWrite(motor1open,HIGH);
-        digitalWrite(motor1close,LOW);
+    void gateopen (int open,int close){
+        digitalWrite(open,HIGH);
+        digitalWrite(close,LOW);
     }
 
-    void gate1close (){
-        digitalWrite(motor1open,LOW);
-        digitalWrite(motor1close,HIGH);
+    void gateclose (int open,int close){
+        digitalWrite(open,LOW);
+        digitalWrite(close,HIGH);
     }
 
-    void gate1stop (){
-        digitalWrite(motor1open,LOW);
-        digitalWrite(motor1close,LOW);
-    }
-
-    void gate2open (){
-        digitalWrite(motor2open,HIGH);
-        digitalWrite(motor2close,LOW);
-    }
-
-    void gate2close (){
-        digitalWrite(motor2open,LOW);
-        digitalWrite(motor2close,HIGH);
-    }
-
-    void gate2stop (){
-        digitalWrite(motor2open,LOW);
-        digitalWrite(motor2close,LOW);
-    }
-
-    void gate3open (){
-        digitalWrite(motor3open,HIGH);
-        digitalWrite(motor3close,LOW);
-    }
-
-    void gate3close (){
-        digitalWrite(motor3open,LOW);
-        digitalWrite(motor3close,HIGH);
-    }
-
-    void gate3stop (){
-        digitalWrite(motor3open,LOW);
-        digitalWrite(motor3close,LOW);
+    void gatestop (int open,int close){
+        digitalWrite(open,LOW);
+        digitalWrite(close,LOW);
     }
 
     void stop (){
