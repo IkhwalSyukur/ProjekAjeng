@@ -9,7 +9,7 @@
 #define trigPin3 5
 #define echoPin3 18
 
-long duration, distance, Sensor1, Sensor2, Sensor3;
+long duration, distance;
 
 struct jarak
 {

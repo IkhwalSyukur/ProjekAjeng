@@ -142,10 +142,40 @@ void tb_task(void *pvParameters)
       gt.gate1close();
       if (lm.readlimit1()==1){
         gatestate1=1;
+        gt.gate1stop();
       }
     }
     if (btstate1 == 1 && gatestate1 == 1){
       gt.gate1open();
+      vTaskDelay(500);
+      gt.gate1stop();
     }
+
+    if (btstate2 == 1 && gatestate2 == 0){
+      gt.gate2close();
+      if (lm.readlimit2()==1){
+          gatestate2=1;
+          gt.gate2stop();
+      }
+    }
+    if (btstate2==1 && gatestate2 == 1){
+        gt.gate2open();
+        vTaskDelay(500);
+        gt.gate2stop();
+    }
+
+    if (btstate3 == 1 && gatestate3 == 0){
+      gt.gate3close();
+      if (lm.readlimit3()==1){
+        gatestate3=1;
+        gt.gate3stop();
+      }
+    }
+    if (btstate3 == 1 && gatestate3 == 1){
+      gt.gate3open();
+      vTaskDelay(500);
+      gt.gate3stop();
+    }
+
   }
 }
