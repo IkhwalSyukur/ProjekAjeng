@@ -69,9 +69,9 @@ void jk_task(void *pvParameters)
   (void)pvParameters;
   for (;;)
   {
-    Sensor1 = jk.ReadSensor1();
-    Sensor2 = jk.ReadSensor2();
-    Sensor3 = jk.ReadSensor3();
+    Sensor1 = jk.ReadSensor(trigPin1,echoPin1);
+    Sensor2 = jk.ReadSensor(trigPin2,echoPin2);
+    Sensor3 = jk.ReadSensor(trigPin3,echoPin3);
   }
 }
 
@@ -87,27 +87,23 @@ void gt_task(void *pvParameters)
       gt.gateopen(motor2open,motor2close);
       gt.gateopen(motor3open,motor3close);
     }
-    else if (hasil == 0)
+    else
     {
       gt.gateclose(motor1open,motor1close);
-      if (lm.readlimit1() == 1)
+      if (lm.readlimit(switch1) == 1)
       {
         gt.gatestop(motor1open,motor1close);
       }
       gt.gateclose(motor2open,motor2close);
-      if (lm.readlimit2() == 1)
+      if (lm.readlimit(switch2) == 1)
       {
         gt.gatestop(motor2open,motor2close);
       }
       gt.gateclose(motor3open,motor3close);
-      if (lm.readlimit3() == 1)
+      if (lm.readlimit(switch3) == 1)
       {
         gt.gatestop(motor3open,motor3close);
       }
-    }
-    else
-    {
-      gt.stop();
     }
   }
 }
@@ -144,7 +140,7 @@ void tb_task(void *pvParameters)
     if (btstate1 == 1 && gatestate1 == 0)
     {
       gt.gateclose(motor1open,motor1close);
-      if (lm.readlimit1()==1){
+      if (lm.readlimit(switch1)==1){
         gatestate1=1;
         gt.gatestop(motor1open,motor1close);
       }
@@ -157,7 +153,7 @@ void tb_task(void *pvParameters)
 
     if (btstate2 == 1 && gatestate2 == 0){
       gt.gateclose(motor2open,motor2close);
-      if (lm.readlimit2()==1){
+      if (lm.readlimit(switch2)==1){
           gatestate2=1;
           gt.gatestop(motor2open,motor2close);
       }
@@ -170,7 +166,7 @@ void tb_task(void *pvParameters)
 
     if (btstate3 == 1 && gatestate3 == 0){
       gt.gateclose(motor3open,motor3close);
-      if (lm.readlimit3()==1){
+      if (lm.readlimit(switch3)==1){
         gatestate3=1;
         gt.gatestop(motor3open,motor3close);
       }

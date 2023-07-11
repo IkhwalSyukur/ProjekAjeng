@@ -34,13 +34,4 @@ struct gates{
         digitalWrite(open,LOW);
         digitalWrite(close,LOW);
     }
-
-    void stop (){
-        digitalWrite(motor1open,LOW);
-        digitalWrite(motor1close,LOW);
-        digitalWrite(motor2open,LOW);
-        digitalWrite(motor2close,LOW);
-        digitalWrite(motor3open,LOW);
-        digitalWrite(motor3close,LOW);
-    }
 };

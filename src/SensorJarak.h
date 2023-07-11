@@ -25,36 +25,14 @@ struct jarak
         pinMode(echoPin3, INPUT);
     }
 
-    int ReadSensor1()
+    int ReadSensor(int trigpin,int echopin)
     {
-        digitalWrite(trigPin1, LOW);
+        digitalWrite(trigpin, LOW);
         delayMicroseconds(10);
-        digitalWrite(trigPin1, HIGH);
+        digitalWrite(trigpin, HIGH);
         delayMicroseconds(10);
-        digitalWrite(trigPin1, LOW);
-        duration = pulseIn(echoPin1, HIGH);
-        return distance = (duration / 2) / 29.1;
-    }
-
-    int ReadSensor2()
-    {
-        digitalWrite(trigPin2, LOW);
-        delayMicroseconds(10);
-        digitalWrite(trigPin2, HIGH);
-        delayMicroseconds(10);
-        digitalWrite(trigPin2, LOW);
-        duration = pulseIn(echoPin2, HIGH);
-        return distance = (duration / 2) / 29.1;
-    }
-
-    int ReadSensor3()
-    {
-        digitalWrite(trigPin3, LOW);
-        delayMicroseconds(10);
-        digitalWrite(trigPin3, HIGH);
-        delayMicroseconds(10);
-        digitalWrite(trigPin3, LOW);
-        duration = pulseIn(echoPin2, HIGH);
+        digitalWrite(trigpin, LOW);
+        duration = pulseIn(echopin, HIGH);
         return distance = (duration / 2) / 29.1;
     }
 };

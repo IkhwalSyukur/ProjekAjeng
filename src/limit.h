@@ -15,15 +15,7 @@ struct  mylimit {
         pinMode(switch3,INPUT);
     }
 
-    int readlimit1 (){
-        return digitalRead(switch1);
-    }
-
-    int readlimit2 (){
-        return digitalRead(switch2);
-    }
-
-    int readlimit3 (){
-        return digitalRead(switch3);
+    int readlimit (int Switch){
+        return digitalRead(Switch);
     }
 };

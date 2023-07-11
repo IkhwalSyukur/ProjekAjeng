@@ -2,7 +2,7 @@
 #include <Arduino.h>
 
 #define LED_BUILTIN 2
-#define SENSOR  27
+#define SENSOR  5
 
 long currentMillis = 0;
 long previousMillis = 0;
