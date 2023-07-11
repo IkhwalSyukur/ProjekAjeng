@@ -1,0 +1,75 @@
+{
+  "version": 1,
+  "author": "Ikhwal Syukur",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "wokwi-esp32-devkit-v1", "id": "esp", "top": 0, "left": 0, "attrs": {} },
+    {
+      "type": "wokwi-hc-sr04",
+      "id": "ultrasonic1",
+      "top": -63.3,
+      "left": 165.63,
+      "attrs": { "distance": "400" }
+    },
+    {
+      "type": "wokwi-hc-sr04",
+      "id": "ultrasonic2",
+      "top": 68.7,
+      "left": 168.7,
+      "attrs": { "distance": "400" }
+    },
+    {
+      "type": "wokwi-hc-sr04",
+      "id": "ultrasonic3",
+      "top": 223.5,
+      "left": 172.43,
+      "attrs": { "distance": "7" }
+    },
+    {
+      "type": "wokwi-pushbutton",
+      "id": "btn1",
+      "top": 100.11,
+      "left": -166.38,
+      "attrs": { "color": "green" }
+    }
+  ],
+  "connections": [
+    [ "esp:TX0", "$serialMonitor:RX", "", [] ],
+    [ "esp:RX0", "$serialMonitor:TX", "", [] ],
+    [ "esp:VIN", "ultrasonic1:VCC", "red", [ "h-36.02", "v-213.43", "h176", "v86.13" ] ],
+    [ "ultrasonic2:VCC", "ultrasonic1:VCC", "red", [ "h-95.42", "v-132.94", "h91.95" ] ],
+    [ "ultrasonic3:VCC", "ultrasonic2:VCC", "red", [ "h-99.42", "v-153.33" ] ],
+    [
+      "esp:GND.2",
+      "ultrasonic1:GND",
+      "black",
+      [ "h-60.69", "v-220.6", "h174.67", "v114", "h147.95" ]
+    ],
+    [
+      "ultrasonic2:GND",
+      "ultrasonic1:GND",
+      "black",
+      [ "v16.53", "h-151.02", "v-139.06", "h147.95" ]
+    ],
+    [
+      "ultrasonic3:GND",
+      "ultrasonic2:GND",
+      "black",
+      [ "v21.73", "h-155.42", "v-144.8", "h151.69" ]
+    ],
+    [ "esp:D33", "ultrasonic1:TRIG", "green", [ "h-20.02", "v-97.97", "h150.67", "v70", "h112" ] ],
+    [
+      "esp:D25",
+      "ultrasonic1:ECHO",
+      "yellow",
+      [ "h-28.69", "v-117.57", "h176", "v88.67", "h104" ]
+    ],
+    [ "esp:D12", "ultrasonic2:TRIG", "green", [ "h-21.35", "v78", "h10.67" ] ],
+    [ "esp:D13", "ultrasonic2:ECHO", "yellow", [ "h-29.35", "v78.23", "h284.67" ] ],
+    [ "esp:D27", "ultrasonic3:TRIG", "green", [ "h-49.54", "v242.3", "h298.51" ] ],
+    [ "esp:D26", "ultrasonic3:ECHO", "yellow", [ "h-62.59", "v265.15", "h305.85" ] ],
+    [ "esp:D5", "btn1:2.r", "blue", [ "h33.3", "v149.75", "h-233.98" ] ],
+    [ "esp:GND.2", "btn1:1.l", "black", [ "h-85.96", "v-77.63", "h-13.87" ] ]
+  ],
+  "dependencies": {}
+}
