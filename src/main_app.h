@@ -16,26 +16,21 @@
 
 // gates gt;
 // myflow fl;
-// myfuzzy fz;
+FuzzyHandler fuzzify;
 // mylimit lm;
 // tombol tb;
 
-int hasil;
-// int distance1;
-// int distance2;
-// int distance3;
 // float flow;
-int btstate1;
-int btstate2;
-int btstate3;
-int gatestate1;
-int gatestate2;
-int gatestate3;
+// int btstate1;
+// int btstate2;
+// int btstate3;
+// int gatestate1;
+// int gatestate2;
+// int gatestate3;
 
-// void jk_task(void *pvParam);
 // void gt_task(void *pvParameters);
 // void fl_task(void *pvParameters);
-// void fz_task(void *pvParameters);
+void fuzzify_task(void *pvParameters);
 // void tb_task(void *pvParametres);
 
 // Distance ultrasonic;
@@ -46,37 +41,22 @@ void setup()
   ultrasonic.begin();
   // gt.begin();
   // fl.begin();
-  // fz.begin();
+  fuzzify.begin();
   // lm.begin();
   // tb.begin();
+  pinMode(32, OUTPUT);
 
-  // xTaskCreatePinnedToCore(jk_task, "Readdistance", 1024 * 2, NULL, 10, NULL, 1);
   // xTaskCreatePinnedToCore(gt_task, "Gate Task", 1024, NULL, 1, NULL, 1);
   // xTaskCreatePinnedToCore(fl_task, "Flow Task", 1024, NULL, 10, NULL, 1);
-  // xTaskCreatePinnedToCore(fz_task, "Fuzzy Task", 1024, NULL, 10, NULL, 1);
+  delay(1000);
+  xTaskCreate(fuzzify_task, "Fuzzy Task", 1024 * 4, NULL, 10, NULL);
   // xTaskCreatePinnedToCore(tb_task, "Tombol Task", 1024, NULL, 1, NULL, 1);
 }
 
 void loop()
 {
-  // put your main code here, to run repeatedly:
   vTaskDelete(NULL);
 }
-
-// void jk_task(void *pvParam)
-// {
-//   while (1)
-//   {
-//     ultrasonic.distance[0] = ultrasonic.readSensor(trigPin1, echoPin1);
-//     ultrasonic.distance[1] = ultrasonic.readSensor(trigPin2, echoPin2);
-//     ultrasonic.distance[2] = ultrasonic.readSensor(trigPin3, echoPin3);
-
-//     Serial.printf("distance 1: %d\n", ultrasonic.distance[0]);
-//     Serial.printf("distance 2: %d\n", ultrasonic.distance[1]);
-//     Serial.printf("distance 3: %d\n", ultrasonic.distance[2]);
-//     vTaskDelay(500);
-//   }
-// }
 
 // void gt_task(void *pvParameters)
 // {
@@ -119,16 +99,20 @@ void loop()
 //     flow = fl.readflow();
 //   }
 // }
-
-// void fz_task(void *pvParam)
-// {
-//   while(1)
-//   {
-//     fz.setinput(1, distance1);
-//     fz.fuzify();
-//     hasil = fz.out();
-//   }
-// }
+int hasil;
+void fuzzify_task(void *pvParam)
+{
+  Serial.println("Fuzzify Task Stareted !");
+  while (1)
+  {
+    fuzzify.setinput(1, ultrasonic.distance[0]);
+    fuzzify.fuzify();
+    hasil = fuzzify.output();
+    Serial.printf("output: %d\n", hasil);
+    digitalWrite(32, (hasil == 1) ? HIGH : LOW);
+    vTaskDelay(500);
+  }
+}
 
 // void tb_task(void *pvParameters)
 // {
