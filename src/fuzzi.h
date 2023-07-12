@@ -15,7 +15,7 @@ struct myfuzzy{
     Sensor1->addFuzzySet(kurang);
     FuzzySet *sedang = new FuzzySet(13, 14, 15, 16);
     Sensor1->addFuzzySet(sedang);
-    FuzzySet *normal = new FuzzySet(16, 17, 18, 19);
+    FuzzySet *normal = new FuzzySet(16, 17, 18, 18);
     Sensor1->addFuzzySet(normal);
 
     FuzzySet *buka = new FuzzySet(1,1,1,1);

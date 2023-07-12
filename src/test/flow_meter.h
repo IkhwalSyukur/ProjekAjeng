@@ -62,8 +62,8 @@ void loop()
     
     // Print the flow rate for this second in litres / minute
     Serial.print("Flow rate: ");
-    Serial.print(int(flowRate));  // Print the integer part of the variable
-    Serial.print("L/min");
+    Serial.print(int(flowMilliLitres));  // Print the integer part of the variable
+    Serial.print("mL/min");
     Serial.print("\t");       // Print tab space
 
     // Print the cumulative total of litres flowed since starting

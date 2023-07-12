@@ -2,12 +2,12 @@
 
 #include <Arduino.h>
 
-#define trigPin1 2
-#define echoPin1 4
-#define trigPin2 21
-#define echoPin2 22
-#define trigPin3 5
-#define echoPin3 18
+#define trigPin1 33
+#define echoPin1 25
+#define trigPin2 12
+#define echoPin2 13
+#define trigPin3 27
+#define echoPin3 26
 
 long duration, distance;
 

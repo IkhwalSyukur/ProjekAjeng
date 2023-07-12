@@ -22,17 +22,6 @@ struct myflow
         pulseCount++;
     }
 
-    void begin()
-    {
-        pinMode(datapin, INPUT_PULLUP);
-
-        pulseCount = 0;
-        flowRate = 0.0;
-        flowMilliLitres = 0;
-        totalMilliLitres = 0;
-        previousMillis = 0;
-    }
-
     float readflow()
     {
         currentMillis = millis();
@@ -45,6 +34,6 @@ struct myflow
             flowMilliLitres = (flowRate / 60) * 1000;
             totalMilliLitres += flowMilliLitres;
         }
-    return totalMilliLitres;
+    return flowMilliLitres;
     }
 };

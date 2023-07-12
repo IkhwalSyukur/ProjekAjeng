@@ -14,15 +14,7 @@ struct tombol {
         pinMode(tombol3,INPUT);
     }
 
-    int readtombol1(){
-        return digitalRead(tombol1);
-    }
-
-    int readtombol2(){
-        return digitalRead(tombol2);
-    }
-
-    int readTombol3(){
-        return digitalRead(tombol3);
+    int readtombol(int tombol){
+        return digitalRead(tombol);
     }
 };
