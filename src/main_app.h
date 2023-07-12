@@ -14,30 +14,26 @@
 #include "limit.h"
 #include "manual.h"
 
-gates gt;
-jarak jk;
-myflow fl;
-myfuzzy fz;
-mylimit lm;
-tombol tb;
+// gates gt;
+// myflow fl;
+FuzzyHandler fuzzify;
+// mylimit lm;
+// tombol tb;
 
-int hasil;
-int Sensor1;
-int Sensor2;
-int Sensor3;
-float flow;
-int btstate1;
-int btstate2;
-int btstate3;
-int gatestate1;
-int gatestate2;
-int gatestate3;
+// float flow;
+// int btstate1;
+// int btstate2;
+// int btstate3;
+// int gatestate1;
+// int gatestate2;
+// int gatestate3;
 
-void jk_task(void *pvParameters);
-void gt_task(void *pvParameters);
-void fl_task(void *pvParameters);
-void fz_task(void *pvParameters);
-void tb_task(void *pvParametres);
+// void gt_task(void *pvParameters);
+// void fl_task(void *pvParameters);
+void fuzzify_task(void *pvParameters);
+// void tb_task(void *pvParametres);
+
+// Distance ultrasonic;
 
 void IRAM_ATTR pulseCounter()
 {
@@ -47,11 +43,6 @@ void IRAM_ATTR pulseCounter()
 void setup()
 {
   Serial.begin(115200);
-  jk.begin();
-  gt.begin();
-  fz.begin();
-  lm.begin();
-  tb.begin();
 
   pinMode(datapin, INPUT_PULLUP);
   pulseCount = 0;
@@ -61,151 +52,131 @@ void setup()
   previousMillis = 0;
 
   attachInterrupt(digitalPinToInterrupt(datapin), pulseCounter, FALLING);
+  
+  ultrasonic.begin();
+  // gt.begin();
+  // fl.begin();
+  fuzzify.begin();
+  // lm.begin();
+  // tb.begin();
+  pinMode(32, OUTPUT);
 
-  xTaskCreatePinnedToCore(jk_task, "ReadSensor", 1024, NULL, 10, NULL, 0);
   // xTaskCreatePinnedToCore(gt_task, "Gate Task", 1024, NULL, 1, NULL, 1);
-  xTaskCreatePinnedToCore(fl_task, "Flow Task", 4096, NULL, 10, NULL, 1);
-  xTaskCreatePinnedToCore(fz_task, "Fuzzy Task", 1024, NULL, 10, NULL, 1);
+  // xTaskCreatePinnedToCore(fl_task, "Flow Task", 1024, NULL, 10, NULL, 1);
+  delay(1000);
+  xTaskCreate(fuzzify_task, "Fuzzy Task", 1024 * 4, NULL, 10, NULL);
   // xTaskCreatePinnedToCore(tb_task, "Tombol Task", 1024, NULL, 1, NULL, 1);
 }
 
 void loop()
 {
-  // put your main code here, to run repeatedly:
   vTaskDelete(NULL);
 }
 
-void jk_task(void *pvParameters)
+// void gt_task(void *pvParameters)
+// {
+//   (void)pvParameters;
+//   for (;;)
+//   {
+
+//     if (hasil == 1)
+//     {
+//       gt.gateopen(motor1open,motor1close);
+//       gt.gateopen(motor2open,motor2close);
+//       gt.gateopen(motor3open,motor3close);
+//     }
+//     else
+//     {
+//       gt.gateclose(motor1open,motor1close);
+//       if (lm.readlimit(switch1) == 1)
+//       {
+//         gt.gatestop(motor1open,motor1close);
+//       }
+//       gt.gateclose(motor2open,motor2close);
+//       if (lm.readlimit(switch2) == 1)
+//       {
+//         gt.gatestop(motor2open,motor2close);
+//       }
+//       gt.gateclose(motor3open,motor3close);
+//       if (lm.readlimit(switch3) == 1)
+//       {
+//         gt.gatestop(motor3open,motor3close);
+//       }
+//     }
+//   }
+// }
+
+// void fl_task(void *pvParameters)
+// {
+//   (void)pvParameters;
+//   for (;;)
+//   {
+//     flow = fl.readflow();
+//   }
+// }
+int hasil;
+void fuzzify_task(void *pvParam)
 {
-  (void)pvParameters;
-  for (;;)
+  Serial.println("Fuzzify Task Stareted !");
+  while (1)
   {
-    Sensor1 = jk.ReadSensor(trigPin1, echoPin1);
-    Sensor2 = jk.ReadSensor(trigPin2, echoPin2);
-    Sensor3 = jk.ReadSensor(trigPin3, echoPin3);
-    Serial.print("Sensor 1 = ");
-    Serial.println(Sensor1);
-    Serial.print("Sensor 2 = ");
-    Serial.println(Sensor2);
-    Serial.print("Sensor 3 = ");
-    Serial.println(Sensor3);
+    fuzzify.setinput(1, ultrasonic.distance[0]);
+    fuzzify.fuzify();
+    hasil = fuzzify.output();
+    Serial.printf("output: %d\n", hasil);
+    digitalWrite(32, (hasil == 1) ? HIGH : LOW);
+    vTaskDelay(500);
   }
 }
 
-void gt_task(void *pvParameters)
-{
-  (void)pvParameters;
-  for (;;)
-  {
+// void tb_task(void *pvParameters)
+// {
+//   (void)pvParameters;
+//   for (;;)
+//   {
+//     btstate1 = tb.readtombol1();
+//     btstate2 = tb.readtombol2();
+//     btstate3 = tb.readTombol3();
 
-    if (hasil == 1)
-    {
-      gt.gateopen(motor1open, motor1close);
-      vTaskDelay(3200);
-      gt.gatestop(motor1open,motor1close);
-      // gt.gateopen(motor2open, motor2close);
-      // gt.gateopen(motor3open, motor3close);
-    }
-    else
-    {
-      gt.gateclose(motor1open, motor1close);
-      if (lm.readlimit(switch1) == 1)
-      {
-        gt.gatestop(motor1open, motor1close);
-      }
-      gt.gateclose(motor2open, motor2close);
-      if (lm.readlimit(switch2) == 1)
-      {
-        gt.gatestop(motor2open, motor2close);
-      }
-      gt.gateclose(motor3open, motor3close);
-      if (lm.readlimit(switch3) == 1)
-      {
-        gt.gatestop(motor3open, motor3close);
-      }
-    }
-  }
-}
+//     if (btstate1 == 1 && gatestate1 == 0)
+//     {
+//       gt.gateclose(motor1open,motor1close);
+//       if (lm.readlimit(switch1)==1){
+//         gatestate1=1;
+//         gt.gatestop(motor1open,motor1close);
+//       }
+//     }
+//     if (btstate1 == 1 && gatestate1 == 1){
+//       gt.gateopen(motor1open,motor1close);
+//       vTaskDelay(500);
+//       gt.gatestop(motor1open,motor1close);
+//     }
 
-void fl_task(void *pvParameters)
-{
-  (void)pvParameters;
-  for (;;)
-  {
-    flow = fl.readflow();
-    Serial.print("Flow = ");
-    Serial.println(flow);
-  }
-}
+//     if (btstate2 == 1 && gatestate2 == 0){
+//       gt.gateclose(motor2open,motor2close);
+//       if (lm.readlimit(switch2)==1){
+//           gatestate2=1;
+//           gt.gatestop(motor2open,motor2close);
+//       }
+//     }
+//     if (btstate2==1 && gatestate2 == 1){
+//         gt.gateopen(motor2open,motor2close);
+//         vTaskDelay(500);
+//         gt.gatestop(motor2open,motor2close);
+//     }
 
-void fz_task(void *pvParameters)
-{
-  (void)pvParameters;
-  for (;;)
-  {
-    fz.setinput(1, Sensor3);
-    fz.fuzify();
-    hasil = fz.out();
-    Serial.print("Hasil = ");
-    Serial.println(hasil);
-  }
-}
+//     if (btstate3 == 1 && gatestate3 == 0){
+//       gt.gateclose(motor3open,motor3close);
+//       if (lm.readlimit(switch3)==1){
+//         gatestate3=1;
+//         gt.gatestop(motor3open,motor3close);
+//       }
+//     }
+//     if (btstate3 == 1 && gatestate3 == 1){
+//       gt.gateopen(motor3open,motor3close);
+//       vTaskDelay(500);
+//       gt.gatestop(motor3open,motor3close);
+//     }
 
-void tb_task(void *pvParameters)
-{
-  (void)pvParameters;
-  for (;;)
-  {
-    btstate1 = tb.readtombol(tombol1);
-    btstate2 = tb.readtombol(tombol2);
-    btstate3 = tb.readtombol(tombol3);
-
-    if (btstate1 == 0 && gatestate1 == 0)
-    {
-      gt.gateclose(motor1open, motor1close);
-      if (lm.readlimit(switch1) == 1)
-      {
-        gatestate1 = 1;
-        gt.gatestop(motor1open, motor1close);
-      }
-    }
-    if (btstate1 == 0 && gatestate1 == 1)
-    {
-      gt.gateopen(motor1open, motor1close);
-      vTaskDelay(3200);
-      gt.gatestop(motor1open, motor1close);
-    }
-
-    if (btstate2 == 0 && gatestate2 == 0)
-    {
-      gt.gateclose(motor2open, motor2close);
-      if (lm.readlimit(switch2) == 1)
-      {
-        gatestate2 = 1;
-        gt.gatestop(motor2open, motor2close);
-      }
-    }
-    if (btstate2 == 0 && gatestate2 == 1)
-    {
-      gt.gateopen(motor2open, motor2close);
-      vTaskDelay(3200);
-      gt.gatestop(motor2open, motor2close);
-    }
-
-    if (btstate3 == 0 && gatestate3 == 0)
-    {
-      gt.gateclose(motor3open, motor3close);
-      if (lm.readlimit(switch3) == 1)
-      {
-        gatestate3 = 1;
-        gt.gatestop(motor3open, motor3close);
-      }
-    }
-    if (btstate3 == 0 && gatestate3 == 1)
-    {
-      gt.gateopen(motor3open, motor3close);
-      vTaskDelay(3200);
-      gt.gatestop(motor3open, motor3close);
-    }
-  }
-}
+//   }
+// }
