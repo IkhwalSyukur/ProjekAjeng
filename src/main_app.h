@@ -52,7 +52,7 @@ void setup()
   previousMillis = 0;
 
   attachInterrupt(digitalPinToInterrupt(datapin), pulseCounter, FALLING);
-  
+
   ultrasonic.begin();
   // gt.begin();
   // fl.begin();
@@ -114,7 +114,7 @@ void loop()
 //     flow = fl.readflow();
 //   }
 // }
-int hasil;
+float hasil;
 void fuzzify_task(void *pvParam)
 {
   Serial.println("Fuzzify Task Stareted !");
@@ -124,7 +124,7 @@ void fuzzify_task(void *pvParam)
     fuzzify.fuzify();
     hasil = fuzzify.output();
     Serial.printf("output: %d\n", hasil);
-    digitalWrite(32, (hasil == 1) ? HIGH : LOW);
+    // digitalWrite(32, (hasil == 1) ? HIGH : LOW);
     vTaskDelay(500);
   }
 }

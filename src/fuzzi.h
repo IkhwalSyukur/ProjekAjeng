@@ -24,9 +24,11 @@ void FuzzyHandler::begin()
   FuzzySet *normal = new FuzzySet(16, 17, 18, 19);
   Sensor1->addFuzzySet(normal);
 
-  FuzzySet *buka = new FuzzySet(1, 1, 1, 1);
+  FuzzySet *buka = new FuzzySet(50, 75, 75, 100);
   pintu->addFuzzySet(buka);
-  FuzzySet *tutup = new FuzzySet(0, 0, 0, 0);
+  FuzzySet *bukasedang = new FuzzySet(0, 50, 50, 100);
+  pintu->addFuzzySet(bukasedang);
+  FuzzySet *tutup = new FuzzySet(0, 0, 25, 50);
   pintu->addFuzzySet(tutup);
 
   fuzzy->addFuzzyInput(Sensor1);
@@ -41,18 +43,20 @@ void FuzzyHandler::begin()
   FuzzyRule *FuzzyRule1 = new FuzzyRule(1, ifSensorKurang, thenPintuBuka1);
   fuzzy->addFuzzyRule(FuzzyRule1);
 
+  //Rules 2
   FuzzyRuleAntecedent *ifSensorSedang = new FuzzyRuleAntecedent();
   ifSensorSedang->joinSingle(sedang);
-  FuzzyRuleConsequent *thenPintuTutup1 = new FuzzyRuleConsequent();
-  thenPintuTutup1->addOutput(tutup);
-  FuzzyRule *FuzzyRule2 = new FuzzyRule(2, ifSensorSedang, thenPintuTutup1);
+  FuzzyRuleConsequent *thenPintuSedang1 = new FuzzyRuleConsequent();
+  thenPintuSedang1->addOutput(bukasedang);
+  FuzzyRule *FuzzyRule2 = new FuzzyRule(2, ifSensorSedang, thenPintuSedang1);
   fuzzy->addFuzzyRule(FuzzyRule2);
 
+  //Rules 3
   FuzzyRuleAntecedent *ifSensorNormal = new FuzzyRuleAntecedent();
   ifSensorNormal->joinSingle(normal);
-  FuzzyRuleConsequent *thenPintuTutup2 = new FuzzyRuleConsequent();
-  thenPintuTutup2->addOutput(tutup);
-  FuzzyRule *FuzzyRule3 = new FuzzyRule(3, ifSensorNormal, thenPintuTutup2);
+  FuzzyRuleConsequent *thenPintuTutup1 = new FuzzyRuleConsequent();
+  thenPintuTutup1->addOutput(tutup);
+  FuzzyRule *FuzzyRule3 = new FuzzyRule(3, ifSensorNormal, thenPintuTutup1);
   fuzzy->addFuzzyRule(FuzzyRule3);
 }
 
