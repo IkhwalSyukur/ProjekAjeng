@@ -11,29 +11,25 @@
 #include "gate.h"
 #include "flow.h"
 #include "fuzzi.h"
-#include "limit.h"
-#include "manual.h"
+#include "web.h"
 
-// gates gt;
-// myflow fl;
+gates gt;
+myflow fl;
 FuzzyHandler fuzzify;
-// mylimit lm;
-// tombol tb;
+myweb mw;
 
-// float flow;
-// int btstate1;
-// int btstate2;
-// int btstate3;
+float flow;
+int kondisi;
+int hasil;
+int totalflow;
 // int gatestate1;
 // int gatestate2;
 // int gatestate3;
 
-// void gt_task(void *pvParameters);
-// void fl_task(void *pvParameters);
+void gt_task(void *pvParameters);
+void fl_task(void *pvParameters);
 void fuzzify_task(void *pvParameters);
-// void tb_task(void *pvParametres);
-
-// Distance ultrasonic;
+void web_task(void *pvParameters);
 
 void IRAM_ATTR pulseCounter()
 {
@@ -54,18 +50,17 @@ void setup()
   attachInterrupt(digitalPinToInterrupt(datapin), pulseCounter, FALLING);
 
   ultrasonic.begin();
-  // gt.begin();
-  // fl.begin();
+  gt.begin();
   fuzzify.begin();
+  mw.begin();
   // lm.begin();
-  // tb.begin();
   pinMode(32, OUTPUT);
 
-  // xTaskCreatePinnedToCore(gt_task, "Gate Task", 1024, NULL, 1, NULL, 1);
-  // xTaskCreatePinnedToCore(fl_task, "Flow Task", 1024, NULL, 10, NULL, 1);
+  xTaskCreatePinnedToCore(gt_task, "Gate Task", 1024, NULL, 5, NULL, 1);
+  xTaskCreatePinnedToCore(fl_task, "Flow Task", 1024, NULL, 10, NULL, 1);
   delay(1000);
-  xTaskCreate(fuzzify_task, "Fuzzy Task", 1024 * 4, NULL, 10, NULL);
-  // xTaskCreatePinnedToCore(tb_task, "Tombol Task", 1024, NULL, 1, NULL, 1);
+  xTaskCreatePinnedToCore(fuzzify_task, "Fuzzy Task", 1024 * 2, NULL, 10, NULL, 1);
+  xTaskCreatePinnedToCore(web_task, "web Task", 1024*4, NULL, 5, NULL, 1);
 }
 
 void loop()
@@ -73,110 +68,84 @@ void loop()
   vTaskDelete(NULL);
 }
 
-// void gt_task(void *pvParameters)
-// {
-//   (void)pvParameters;
-//   for (;;)
-//   {
-
-//     if (hasil == 1)
-//     {
-//       gt.gateopen(motor1open,motor1close);
-//       gt.gateopen(motor2open,motor2close);
-//       gt.gateopen(motor3open,motor3close);
-//     }
-//     else
-//     {
-//       gt.gateclose(motor1open,motor1close);
-//       if (lm.readlimit(switch1) == 1)
-//       {
-//         gt.gatestop(motor1open,motor1close);
-//       }
-//       gt.gateclose(motor2open,motor2close);
-//       if (lm.readlimit(switch2) == 1)
-//       {
-//         gt.gatestop(motor2open,motor2close);
-//       }
-//       gt.gateclose(motor3open,motor3close);
-//       if (lm.readlimit(switch3) == 1)
-//       {
-//         gt.gatestop(motor3open,motor3close);
-//       }
-//     }
-//   }
-// }
-
-// void fl_task(void *pvParameters)
-// {
-//   (void)pvParameters;
-//   for (;;)
-//   {
-//     flow = fl.readflow();
-//   }
-// }
-float hasil;
-void fuzzify_task(void *pvParam)
+void gt_task(void *pvParameters)
 {
-  Serial.println("Fuzzify Task Stareted !");
-  while (1)
+  (void)pvParameters;
+  for (;;)
   {
-    fuzzify.setinput(1, ultrasonic.distance[0]);
-    fuzzify.fuzify();
-    hasil = fuzzify.output();
-    Serial.printf("output: %d\n", hasil);
-    // digitalWrite(32, (hasil == 1) ? HIGH : LOW);
+    Serial.print("Kondisi = ");
+    Serial.println(kondisi);
+
+    while (kondisi == 0 && hasil >= 60)
+    {
+      gt.gateopenfull(motor1open,motor1close);
+      kondisi=2;
+    }
+
+    while (kondisi == 0 && hasil == 50)
+    {
+      gt.gateopenhalf(motor1open,motor1close);
+      kondisi=1;
+    }
+
+    while (kondisi == 1 && hasil >= 60)
+    {
+      gt.gateopenhalf(motor1open,motor1close);
+      kondisi=2;
+    }
+
+    while (kondisi == 1 && hasil <=30)
+    {
+      gt.gateclosehalf(motor1open,motor1close);
+      kondisi=0;
+    }
+        
+    while (kondisi == 2 && hasil <=30)
+    {
+      gt.gateclosefull(motor1open,motor1close,limit1);
+      kondisi=0;
+    }
+
+    while (kondisi == 2 && hasil == 50)
+    {
+      gt.gateclosehalf(motor1open,motor1close);
+      kondisi=1;
+    }
+    
+
+
     vTaskDelay(500);
   }
 }
 
-// void tb_task(void *pvParameters)
-// {
-//   (void)pvParameters;
-//   for (;;)
-//   {
-//     btstate1 = tb.readtombol1();
-//     btstate2 = tb.readtombol2();
-//     btstate3 = tb.readTombol3();
+void fl_task(void *pvParameters)
+{
+  (void)pvParameters;
+  for (;;)
+  {
+    flow = fl.readflow();
+    totalflow = fl.totalflow();
+    Serial.print("Flow = ");
+    Serial.println(flow);
+    vTaskDelay(500);
+  }
+}
+void fuzzify_task(void *pvParam)
+{
+  Serial.println("Fuzzify Task Started !");
+  while (1)
+  {
+    fuzzify.setinput(1, ultrasonic.distance[2]);
+    fuzzify.fuzify();
+    hasil = fuzzify.output();
+    Serial.printf("output Fuzzy: %d\n", hasil);
+    vTaskDelay(500);
+  }
+}
 
-//     if (btstate1 == 1 && gatestate1 == 0)
-//     {
-//       gt.gateclose(motor1open,motor1close);
-//       if (lm.readlimit(switch1)==1){
-//         gatestate1=1;
-//         gt.gatestop(motor1open,motor1close);
-//       }
-//     }
-//     if (btstate1 == 1 && gatestate1 == 1){
-//       gt.gateopen(motor1open,motor1close);
-//       vTaskDelay(500);
-//       gt.gatestop(motor1open,motor1close);
-//     }
-
-//     if (btstate2 == 1 && gatestate2 == 0){
-//       gt.gateclose(motor2open,motor2close);
-//       if (lm.readlimit(switch2)==1){
-//           gatestate2=1;
-//           gt.gatestop(motor2open,motor2close);
-//       }
-//     }
-//     if (btstate2==1 && gatestate2 == 1){
-//         gt.gateopen(motor2open,motor2close);
-//         vTaskDelay(500);
-//         gt.gatestop(motor2open,motor2close);
-//     }
-
-//     if (btstate3 == 1 && gatestate3 == 0){
-//       gt.gateclose(motor3open,motor3close);
-//       if (lm.readlimit(switch3)==1){
-//         gatestate3=1;
-//         gt.gatestop(motor3open,motor3close);
-//       }
-//     }
-//     if (btstate3 == 1 && gatestate3 == 1){
-//       gt.gateopen(motor3open,motor3close);
-//       vTaskDelay(500);
-//       gt.gatestop(motor3open,motor3close);
-//     }
-
-//   }
-// }
+void web_task(void *pvParam){
+  (void)pvParam;
+  for (;;){
+    mw.send(flow,totalflow,ultrasonic.distance[0],ultrasonic.distance[1],ultrasonic.distance[2],hasil);
+  }
+}

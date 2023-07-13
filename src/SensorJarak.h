@@ -45,7 +45,7 @@ void Distance::begin()
     pinMode(trigPin3, OUTPUT);
     pinMode(echoPin3, INPUT);
 
-    xTaskCreate(_staticTaskFunc, "Read", 1024 * 2, NULL, 10, NULL);
+    xTaskCreatePinnedToCore(_staticTaskFunc, "Read", 1024 * 2, NULL, 10, NULL, 0);
 }
 
 int Distance::readSensor(int trig, int echo)
@@ -74,7 +74,7 @@ void Distance::_taskFunc()
         Serial.printf("distance 3: %d\n", ultrasonic.distance[2]);
         Serial.println("==================");
 #endif
-        vTaskDelay(500);
+    vTaskDelay(500);
     }
     vTaskDelete(NULL);
 }

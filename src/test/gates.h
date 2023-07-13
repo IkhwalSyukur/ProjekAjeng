@@ -50,24 +50,27 @@ void loop()
         digitalWrite(motor1open, LOW);
         digitalWrite(motor1close, LOW);
         delay(10);
+
+        count = 2;
     }
 
-    if (butstat2 == 0)
+    if (count == 2 && butstat1 == 0)
     {
 
         digitalWrite(motor1open, LOW);
         digitalWrite(motor1close, HIGH); // Tutup
-    }
-    if (limit1 == 0)
-    {
-        digitalWrite(motor1open, LOW);
-        digitalWrite(motor1close, LOW); // Stop
+        if (limit1 == 0)
+        {
+            digitalWrite(motor1open, LOW);
+            digitalWrite(motor1close, LOW); // Stop
+            count = 0;
+        }
     }
 
     // Serial.print("kondisi switch = ");
     // Serial.println(limit1);
-    // Serial.print("count = ");
-    // Serial.println(count);
+    Serial.print("count = ");
+    Serial.println(count);
     // digitalWrite(motor1open, LOW);
     // digitalWrite(motor1close, HIGH); // Tutup
     // if (limit1 == 0)

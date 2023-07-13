@@ -23,7 +23,7 @@
       "id": "ultrasonic3",
       "top": 223.5,
       "left": 172.43,
-      "attrs": { "distance": "7" }
+      "attrs": { "distance": "14" }
     },
     {
       "type": "wokwi-pushbutton",
@@ -32,13 +32,12 @@
       "left": -166.38,
       "attrs": { "color": "green" }
     },
-    {
-      "type": "wokwi-led",
-      "id": "led1",
-      "top": -21.67,
-      "left": -181.98,
-      "attrs": { "color": "red" }
-    }
+    { "type": "wokwi-relay-module", "id": "relay1", "top": 137.25, "left": -323.66, "attrs": {} },
+    { "type": "wokwi-relay-module", "id": "relay2", "top": 216.99, "left": -321.49, "attrs": {} },
+    { "type": "wokwi-slide-switch", "id": "sw1", "top": 36.73, "left": -236.59, "attrs": {} },
+    { "type": "wokwi-slide-switch", "id": "sw2", "top": 240.4, "left": -151.95, "attrs": {} },
+    { "type": "wokwi-slide-switch", "id": "sw3", "top": 311.64, "left": -149.59, "attrs": {} },
+    { "type": "wokwi-slide-switch", "id": "sw4", "top": 407.45, "left": -150.97, "attrs": {} }
   ],
   "connections": [
     [ "esp:TX0", "$serialMonitor:RX", "", [] ],
@@ -77,8 +76,25 @@
     [ "esp:D26", "ultrasonic3:ECHO", "yellow", [ "h-62.59", "v265.15", "h305.85" ] ],
     [ "esp:D5", "btn1:2.r", "blue", [ "h33.3", "v149.75", "h-233.98" ] ],
     [ "esp:GND.2", "btn1:1.l", "black", [ "h-85.96", "v-77.63", "h-13.87" ] ],
-    [ "led1:A", "esp:D32", "green", [ "v0" ] ],
-    [ "led1:C", "btn1:1.l", "green", [ "v0" ] ]
+    [ "relay2:VCC", "relay1:VCC", "red", [ "h-16.92", "v-82.14", "h-1.08" ] ],
+    [ "relay1:VCC", "esp:VIN", "red", [ "h-0.74", "v-39.04", "h144.41", "v43.11" ] ],
+    [ "relay2:GND", "relay1:GND", "black", [ "h-33.08", "v-8.08" ] ],
+    [
+      "relay1:GND",
+      "esp:GND.2",
+      "black",
+      [ "h-30.91", "v-66.28", "h165.96", "v73.28", "h146.56", "v-23.71" ]
+    ],
+    [ "esp:D18", "relay2:IN", "violet", [ "h19.38", "v-67.95", "h-497.88", "v241.64" ] ],
+    [ "esp:D19", "relay1:IN", "purple", [ "h25.84", "v-76.77", "h-492.49", "v23.71" ] ],
+    [ "sw1:1", "esp:GND.2", "black", [ "v0" ] ],
+    [ "esp:D23", "sw1:2", "cyan", [ "h36.62", "v-51.2", "h-322.22", "v111", "h-36.29" ] ],
+    [ "esp:GND.2", "sw2:1", "black", [ "h-180.68", "v91.06" ] ],
+    [ "esp:D15", "sw2:2", "green", [ "h25.84", "v155.52", "h-261.87" ] ],
+    [ "esp:D2", "sw3:2", "green", [ "h54.94", "v252.99", "h-285.58" ] ],
+    [ "esp:GND.2", "sw3:1", "black", [ "h-168.82", "v195.6" ] ],
+    [ "esp:D4", "sw4:2", "green", [ "h15.07", "v335.6", "h-251.1" ] ],
+    [ "esp:GND.2", "sw4:1", "black", [ "h-193.61", "v264.57" ] ]
   ],
   "dependencies": {}
 }
